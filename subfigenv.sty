@@ -1,0 +1,28 @@
+% This package is based on an example in the documentation
+% of the subfig package.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{subfigenv}[2015/03/10 subfigure environment package]
+\RequirePackage[caption=false]{subfig}
+
+\newcommand{\subfigenv@startsubfig@hook}
+  {}
+
+% TODO: change 'hook = #1' to 'hook += #1'
+\newcommand{\BeforeEverySubfigure}[1]
+  {\renewcommand{\subfigenv@startsubfig@hook}{#1}}
+
+\newsavebox{\subfigenv@box}
+\newtoks{\subfigenv@caption}
+\newtoks{\subfigenv@label}
+\newenvironment{subfigure}[2][b]
+  {\begin{lrbox}{\subfigenv@box}
+   \begin{minipage}[#1]{#2}
+   \subfigenv@startsubfig@hook
+   \renewcommand{\caption}[1]{\global\subfigenv@caption={##1}\ignorespaces}
+   \renewcommand{\label}[1]{\global\subfigenv@label={\label{##1}}\ignorespaces}
+   \global\subfigenv@caption={}
+   \global\subfigenv@label={}}
+  {\end{minipage}
+   \end{lrbox}
+   \subfloat[\the\subfigenv@caption]{\the\subfigenv@label\usebox{\subfigenv@box}}}
